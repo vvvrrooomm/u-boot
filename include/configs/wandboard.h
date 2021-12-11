@@ -44,6 +44,7 @@
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
   "preboot=setenv stdout vidconsole,serial\0" \
+  "bootcmd=mmc dev ${mmcdev}; load mmc 0:1 $loadaddr uEnv.txt; env import -t $loadaddr $filesize; run uenvcmd\0" \
 	"splashpos=m,m\0" \
 	"splashimage=" __stringify(CONFIG_LOADADDR) "\0" \
 	"fdtfile=undefined\0" \
@@ -52,9 +53,9 @@
 	"fdt_addr_r=0x18000000\0" \
 	"fdt_addr=0x18000000\0" \
 	"ip_dyn=yes\0" \
-	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
+	"mmcdev=0\0" \
 	"finduuid=part uuid mmc 0:1 uuid\0" \
-	"update_sd_firmware_filename=u-boot.imx\0" \
+	"update_sd_firmware_filename=u-boot.img\0" \
 	"update_sd_firmware=" \
 		"if test ${ip_dyn} = yes; then " \
 			"setenv get_cmd dhcp; " \
@@ -68,29 +69,11 @@
 				"mmc write ${loadaddr} 0x2 ${fw_sz}; " \
 			"fi; "	\
 		"fi\0" \
-	"findfdt="\
-		"if test $board_name = D1 && test $board_rev = MX6QP ; then " \
-			"setenv fdtfile imx6qp-wandboard-revd1.dtb; fi; " \
-		"if test $board_name = D1 && test $board_rev = MX6Q ; then " \
-			"setenv fdtfile imx6q-wandboard-revd1.dtb; fi; " \
-		"if test $board_name = D1 && test $board_rev = MX6DL ; then " \
-			"setenv fdtfile imx6dl-wandboard-revd1.dtb; fi; " \
-		"if test $board_name = C1 && test $board_rev = MX6Q ; then " \
-			"setenv fdtfile imx6q-wandboard.dtb; fi; " \
-		"if test $board_name = C1 && test $board_rev = MX6DL ; then " \
-			"setenv fdtfile imx6dl-wandboard.dtb; fi; " \
-		"if test $board_name = B1 && test $board_rev = MX6Q ; then " \
-			"setenv fdtfile imx6q-wandboard-revb1.dtb; fi; " \
-		"if test $board_name = B1 && test $board_rev = MX6DL ; then " \
-			"setenv fdtfile imx6dl-wandboard-revb1.dtb; fi; " \
-		"if test $fdtfile = undefined; then " \
-			"echo WARNING: Could not determine dtb to use; fi; \0" \
 	"kernel_addr_r=" __stringify(CONFIG_LOADADDR) "\0" \
 	"pxefile_addr_r=" __stringify(CONFIG_LOADADDR) "\0" \
 	"ramdisk_addr_r=0x13000000\0" \
 	"ramdiskaddr=0x13000000\0" \
 	"scriptaddr=" __stringify(CONFIG_LOADADDR) "\0" \
-	BOOTENV
 
 #define BOOT_TARGET_DEVICES(func) \
 	func(MMC, mmc, 0) \
@@ -101,7 +84,6 @@
 	func(PXE, pxe, na) \
 	func(DHCP, dhcp, na)
 
-#include <config_distro_bootcmd.h>
 #include <linux/stringify.h>
 
 /* Physical Memory Map */

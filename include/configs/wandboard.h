@@ -43,7 +43,7 @@
 #define CONFIG_IMX_VIDEO_SKIP
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"console=ttymxc0\0" \
+  "preboot=setenv stdout vidconsole,serial\0" \
 	"splashpos=m,m\0" \
 	"splashimage=" __stringify(CONFIG_LOADADDR) "\0" \
 	"fdtfile=undefined\0" \
